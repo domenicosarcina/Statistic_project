@@ -1,0 +1,76 @@
+---
+title: "Project_Lab"
+author: "Domenico_Sarcina"
+date: "4/6/2021"
+output: html_document
+runtime: shiny
+---
+```{r}
+Players <- read.csv(file = 'fifa21_male2.csv', header = TRUE)
+YoungPlayers <- subset (Players, Age<22)
+OldPlayers <- subset (Players, Age>28)
+hist(YoungPlayers$OVA)
+hist(OldPlayers$OVA)
+
+```
+
+```{r}
+CBPlayers <- subset(Players, Position=='CB')
+LRBPlayers <- subset(Players, Position=='LB' | Position=='RB' | Position=='RB RM' | Position=='LB LM' | Position=='LB LWB' | Position=='RB RWB' | Position=='RB LB')
+
+hist(CBPlayers$Sprint.Speed)
+hist(LRBPlayers$Sprint.Speed)
+
+summary(CBPlayers$Sprint.Speed)
+summary(LRBPlayers$Sprint.Speed)
+```
+
+
+```{r}
+boxplot(CBPlayers$Sprint.Speed)
+boxplot(LRBPlayers$Sprint.Speed)
+```
+
+```{r}
+library(dplyr)
+library("BSDA")
+
+
+PlayersNumeric <- dplyr::select(Players, PAC, SHO, PAS, DRI, DEF, PHY)
+
+cor(PlayersNumeric)
+
+cor.test(Players$DEF, Players$SHO)
+
+cor.test(Players$PAS, Players$DRI)
+
+cor.test(Players$PHY, Players$DRI)
+
+PlayersPASDRI <- dplyr::select(Players, PAS, DRI)
+PlayersDRISHO <- dplyr::select(Players, DRI, SHO)
+
+plot(PlayersPASDRI, col="red")
+
+plot(PlayersDRISHO, col="red")
+
+ModelDRIPAS <- lm(PlayersPASDRI$DRI ~ PlayersPASDRI$PAS)
+summary(ModelDRIPAS)
+
+ModelDRISHO <- lm(PlayersDRISHO$DRI ~ PlayersDRISHO$SHO)
+summary(ModelDRISHO)
+
+
+
+fifa21_male2 <- read.csv(file = 'fifa21_male2.csv', header = TRUE)
+
+t.test(fifa21_male2$Age,mu=30)
+
+prop.test(x = 1712, n = 17125, p = 0.1)
+
+PlayerEnglish <- subset(Players, Nationality %in% c("England") )
+PlayerNonEnglish <- read.csv(file = 'fifa21_male2.csv', header = TRUE)
+PlayerNonEnglish <- PlayerNonEnglish %>% filter(Nationality != "England")
+z.test(PlayerEnglish$Age,PlayerNonEnglish$Age,alt = "two.sided", sigma.x = (sd(PlayerEnglish$Age)),sigma.y =(sd(PlayerNonEnglish$Age)))
+
+```
+
